@@ -1,15 +1,15 @@
 'use client'
 
-import { Button, Container, Field, Input, Stack } from "@chakra-ui/react";
+import { Button, Checkbox, Field, Flex, Heading, Input, Link, Stack } from "@chakra-ui/react";
 import React from "react";
 
 import { useForm } from "react-hook-form"
 
 import axios from "axios";
 
-interface FormValues {
-    email: string
-    name: string
+export type SignInForm = {
+    password: string;
+    email: string;
 }
 
 const FormUsers: React.FC = () => {
@@ -17,28 +17,29 @@ const FormUsers: React.FC = () => {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<FormValues>()
+    } = useForm<SignInForm>()
 
     const onSubmit = handleSubmit((data) => axios.post("/api/add-user", data))
 
     return (
         <form onSubmit={onSubmit}>
             <Stack gap="4" align="flex-start" maxW="sm">
-                <Field.Root invalid={!!errors.name}>
+                <Heading>Авторизация</Heading>
+                <Field.Root invalid={!!errors.email}>
                     <Field.Label>Логин</Field.Label>
                     <Input 
-                        type="login"
-                        {...register('name', {
+                        type="email"
+                        {...register('email', {
                             required: 'Логин обязателен!'
                         })}
                     />
-                    <Field.ErrorText>{errors.name?.message}</Field.ErrorText>
+                    <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
                 </Field.Root>
                 <Field.Root invalid={!!errors.email}>
                     <Field.Label>Почта</Field.Label>
                     <Input 
-                        type="email"
-                        {...register('email', {
+                        type="password"
+                        {...register('password', {
                             required: 'Почта обязательна',
                             pattern: {
                                 value: /^\S+@\S+\.\S+$/,
@@ -48,7 +49,16 @@ const FormUsers: React.FC = () => {
                     />
                     <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
                 </Field.Root>
-                <Button type="submit">Добавить пользователя</Button>
+                <Checkbox.Root>
+                    <Checkbox.HiddenInput />
+                    <Checkbox.Control />
+                    <Checkbox.Label>Запомнить пароль</Checkbox.Label>
+                </Checkbox.Root>
+                <Button w="100%" type="submit">Войти</Button>
+                <Flex w="100%" justifyContent="space-between">
+                    <Link href="/register">Зарегистрироваться</Link>
+                    <Link href="/recover-account ">Восстановить пароль</Link>
+                </Flex>
             </Stack>
         </form>
     );

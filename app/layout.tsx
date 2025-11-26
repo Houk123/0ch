@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Provider } from "@/components/ui/provider"
 import "./globals.css";
-import { Container, Flex, Link, VStack } from "@chakra-ui/react";
+import { Box, Container, Flex, Heading, IconButton, Input, InputGroup, Link, VStack } from "@chakra-ui/react";
+import AuthProvider from "@/features/auth/session/component/client/AuthProvider";
+import { getServerSession } from "next-auth";
+import SignInUser from "@/features/auth/signin/component/client/SignInUser";
+import { UserPlus } from "lucide-react";
+import { LuSearch } from "react-icons/lu";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,35 +24,42 @@ export const metadata: Metadata = {
   description: "Тут я ловлю приколы)",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession()
+
   return (
     <html suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Provider>
-          <Flex minHeight="100vh">
-            <aside>
-              <nav aria-label="Основная навигация">
-                <VStack gap={5} margin={5} alignItems='start'>
+          <AuthProvider session={session}>
+            <Flex as="aside" gap={5} margin={5} justifyContent="space-between" alignItems='center'>
+              <Flex gap={5}>
+                <Heading>0ch</Heading>
+                <Flex as="nav" gap={5}>
                   <Link>Главная</Link>
-                  <Link href="/users">Пользователи</Link>
-                  <Link href="/add-user">Добавить пользователя</Link>
-                  <Link>ТоТоТо</Link>
-                </VStack>
-              </nav>
-            </aside>
+                </Flex>
+              </Flex>
+
+              <Flex gap={5}>
+                <InputGroup flex="1" endElement={<LuSearch />}>
+                  <Input placeholder="Поиск" />
+                </InputGroup>
+                <SignInUser/>
+              </Flex>
+            </Flex>
           
             <main style={{width: '100%'}}>
               <Container paddingBlock={5}>
                 {children}
               </Container>
             </main>
-          </Flex>
+          </AuthProvider>
         </Provider>
       </body>
     </html>
