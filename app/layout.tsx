@@ -8,6 +8,7 @@ import { getServerSession } from "next-auth";
 import SignInUser from "@/features/auth/signin/component/client/SignInUser";
 import { UserPlus } from "lucide-react";
 import { LuSearch } from "react-icons/lu";
+import ClientLayout from "@/features/query/components/client/QueryClientLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,29 +38,32 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Provider>
-          <AuthProvider session={session}>
-            <Flex as="aside" gap={5} margin={5} justifyContent="space-between" alignItems='center'>
-              <Flex gap={5}>
-                <Heading>0ch</Heading>
-                <Flex as="nav" gap={5}>
-                  <Link>Главная</Link>
+          <ClientLayout>
+            <AuthProvider session={session}>
+              <Flex as="aside" gap={5} margin={5} justifyContent="space-between" alignItems='center'>
+                <Flex gap={5}>
+                  <Heading fontSize="3.5rem">0ch</Heading>
+                  <Flex as="nav" gap={5}>
+                    <Link>Главная</Link>
+                  </Flex>
+                </Flex>
+
+                <Flex gap={5}>
+                  <InputGroup flex="1" endElement={<LuSearch />}>
+                    <Input placeholder="Поиск" />
+                  </InputGroup>
+                  <SignInUser/>
                 </Flex>
               </Flex>
-
-              <Flex gap={5}>
-                <InputGroup flex="1" endElement={<LuSearch />}>
-                  <Input placeholder="Поиск" />
-                </InputGroup>
-                <SignInUser/>
-              </Flex>
-            </Flex>
+            
+              <main style={{width: '100%'}}>
+                <Container paddingBlock={5}>
+                  {children}
+                </Container>
+              </main>
+            </AuthProvider>
+          </ClientLayout>
           
-            <main style={{width: '100%'}}>
-              <Container paddingBlock={5}>
-                {children}
-              </Container>
-            </main>
-          </AuthProvider>
         </Provider>
       </body>
     </html>
